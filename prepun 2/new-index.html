@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PrePun League</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{color-scheme:dark;--ink:#f3f5ff;--mut:#a9b1d6;--glass:rgba(255,255,255,.08);--edge:rgba(255,255,255,.2);--prism:linear-gradient(120deg,#ff6ad5,#7c8cff,#4de1ff,#7dffb2);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.55 Sora,system-ui,sans-serif;background:#080b1a}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(40vw 40vw at 10% 10%,#ff6ad566,transparent 60%),radial-gradient(45vw 45vw at 90% 20%,#4de1ff55,transparent 60%),radial-gradient(50vw 50vw at 60% 95%,#7c8cff66,transparent 60%),radial-gradient(30vw 30vw at 15% 85%,#7dffb244,transparent 60%)}
+h1,h2,h3{margin:0;line-height:1.15}h1{font-size:clamp(30px,6vw,52px);font-weight:800}h2{font-size:26px;font-weight:800}h3{font-size:18px;font-weight:600;margin-bottom:8px}
+.prism{background:var(--prism);-webkit-background-clip:text;background-clip:text;color:transparent}
+.glass,.card{background:var(--glass);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--edge);box-shadow:inset 0 1px 0 #ffffff40,0 12px 40px #0006;border-radius:20px}
+.card{padding:18px}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:12px;padding:12px 18px;border-radius:20px}
+header b{font-size:22px;font-weight:800}
+nav{display:flex;gap:6px;overflow-x:auto;margin:0 12px;padding:6px;border-radius:99px}
+nav button{background:none;border:0;color:var(--mut);padding:9px 16px;border-radius:99px;font:600 14px Sora,sans-serif;cursor:pointer;white-space:nowrap}
+nav button.on{color:#0a0e20;background:var(--prism)}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));margin:14px 0}
+.mut{color:var(--mut);font-size:14px}
+input,select,textarea{width:100%;padding:11px 13px;margin:4px 0 10px;border-radius:12px;border:1px solid var(--edge);background:#ffffff14;color:var(--ink);font:inherit}
+input::placeholder{color:#8f98c2}option{color:#111}
+label{font-size:13px;font-weight:600;color:var(--mut)}
+.btn{border:0;border-radius:12px;padding:10px 18px;font:600 14px Sora,sans-serif;cursor:pointer;color:#0a0e20;background:var(--prism);transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}.btn.alt{background:#ffffff1f;color:var(--ink);border:1px solid var(--edge)}.btn.sm{padding:6px 12px;font-size:12px}.btn:disabled{opacity:.4;cursor:not-allowed}
+:focus-visible{outline:3px solid #4de1ff;outline-offset:2px}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:9px 0;border-top:1px solid #ffffff1c}.row:first-of-type{border-top:0}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600;background:#ffffff26}
+.tag.ok{background:#7dffb2;color:#06210f}.tag.no{background:#ff6a8a;color:#2a0410}.tag.wait{background:#ffd76a;color:#2a1c00}
+.stat{font-size:36px;font-weight:800}
+.ad{padding:12px 16px;border-radius:16px;margin-bottom:12px;display:flex;justify-content:space-between;gap:10px;font-weight:600;background:linear-gradient(120deg,#ff6ad555,#4de1ff55);border:1px solid var(--edge)}
+.wrap{overflow-x:auto}table{border-collapse:collapse;width:100%}td,th{padding:8px;text-align:left;border-bottom:1px solid #ffffff1c}
+canvas{max-width:100%;border-radius:14px}
+#auth{max-width:420px;margin:8vh auto;padding:0 16px}
+#toast{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);padding:11px 20px;border-radius:14px;opacity:0;transition:opacity .2s;pointer-events:none;background:#1a2040ee;border:1px solid var(--edge)}#toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@supports not (backdrop-filter:blur(1px)){.glass,.card{background:#1a2040}}
+</style></head><body>
+<div id="root"></div><div id="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let T=null,ME=null,GYM=null,FOL=[],tab='',mode='login',role='user';
+try{T=localStorage.getItem('pp_t')}catch(e){}
+const val=i=>{const e=document.getElementById(i);return e?e.value.trim():''};
+const toast=m=>{const t=$('#toast');t.textContent=m;t.className='on';clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2800)};
+async function api(m,p,b){const h={};if(T)h.Authorization='Bearer '+T;let body;if(b instanceof Blob){h['Content-Type']=b.type;body=b}else if(b){h['Content-Type']='application/json';body=JSON.stringify(b)}
+let r;try{r=await fetch(p,{method:m,headers:h,body})}catch(e){throw Error('Cannot reach the server. Check your connection')}
+const j=await r.json().catch(()=>({}));if(!r.ok){if(r.status===401&&T){T=null;try{localStorage.removeItem('pp_t')}catch(e){}}throw Error(j.error||'Something went wrong')}return j}
+const tag=s=>`<span class="tag ${['approved','paid'].includes(s)?'ok':['rejected','expired'].includes(s)?'no':['pending','awaiting payment','resubmit','requested'].includes(s)?'wait':''}">${esc(s)}</span>`;
+const TABS={user:[['home','My fitness'],['gyms','Gyms'],['leagues','Leagues'],['ranks','Leaderboards']],gym:[['gdash','My gym'],['gleagues','Leagues'],['gads','Advertising']],admin:[['over','Overview'],['agyms','Gyms'],['aads','Ads and payments'],['mod','Reports']]};
+const logsKey=()=>'pp_logs_'+ME.id,getLogs=()=>{try{return JSON.parse(localStorage.getItem(logsKey()))||[]}catch(e){return[]}},setLogs=l=>{try{localStorage.setItem(logsKey(),JSON.stringify(l))}catch(e){}};
+const D=864e5,fd=t=>new Date(t).toISOString().slice(0,10);
+
+const V={
+async home(){const l=getLogs(),wk=l.filter(x=>Date.now()-x.t<7*D),ads=await api('GET','/api/ads/active'),last=[...l].reverse().find(x=>x.kg);
+return `${ads.map(a=>`<div class="ad"><span>Sponsored: ${esc(a.text)}</span><span>${esc(a.gym)}</span></div>`).join('')}
+<h1 class="prism">Track. Compete. Rank.</h1><p class="mut">Your log stays private on this device. Nothing is shared unless you download your card.</p>
+<div class="grid"><div class="card"><h3>Log today</h3><label>Workout</label><input id="lw" placeholder="Squat 5x5 at 100 kg"><label>Food</label><input id="lf" placeholder="Dal, roti, curd"><label>Calories</label><input id="lc" type="number" min="0"><label>Body weight (kg)</label><input id="lk" type="number" min="0" step=".1"><button class="btn" data-a="log">Save entry</button></div>
+<div class="card"><h3>This week</h3><div class="stat">${wk.filter(x=>x.w).length} workouts</div><p class="mut">${wk.reduce((a,x)=>a+(+x.c||0),0)} kcal${last?` · latest ${last.kg} kg`:''}</p><p>${wk.length>=4?'Strong week. Add 2.5 kg to your main lift.':wk.length?'Good start. Aim for 4 sessions this week.':'No entries yet. Log your first workout.'}</p></div></div>
+<div class="card"><h3>Weekly progress card</h3><canvas id="cv" width="600" height="320"></canvas><br><br><button class="btn" data-a="card">Download as image</button></div>
+<div class="card" style="margin-top:14px"><h3>History</h3>${[...l].reverse().slice(0,8).map(x=>`<div class="row"><span>${esc(x.w||x.f||'Weight check')}</span><span class="mut">${fd(x.t)}${x.kg?' · '+x.kg+' kg':''}</span></div>`).join('')||'<p class="mut">Entries you save appear here.</p>'}</div>`},
+async gyms(){const g=await api('GET','/api/gyms');window._g=g;return `<h2>Find a gym</h2><div class="grid"><div class="card"><h3>Enter Gym Code</h3><input id="gc" placeholder="e.g. IRON24"><button class="btn" data-a="code">Follow gym</button></div><div class="card"><h3>Search</h3><input id="gs" placeholder="City or gym name" oninput="gsearch(this.value)"></div></div><div class="grid" id="gl">${g.map(gcard).join('')||'<p class="mut">No approved gyms yet.</p>'}</div>`},
+async leagues(){const [L,S]=await Promise.all([api('GET','/api/leagues'),api('GET','/api/submissions/mine')]);await refresh();
+return `<h2>Leagues</h2><p class="mut">Your video goes to the sponsoring gym for review.</p><div class="grid">${L.map(l=>`<div class="card"><h3>${esc(l.name)}</h3><p class="mut">${esc(l.gymName)} · ${esc(l.category)} · closes ${esc(l.deadline)}${l.prize?' · prize '+esc(l.prize):''}</p><p><b>${esc(l.exercise)}.</b> ${esc(l.rules)}</p>${S.filter(s=>s.league===l.id).map(s=>`<div class="row"><span>${s.weight} kg</span>${tag(s.st)}${s.st==='resubmit'?'<span class="mut">Gym asked for a new video</span>':''}</div>`).join('')}<label>Declared weight (kg)</label><input id="w-${l.id}" type="number" min="1" step=".5"><label>Performance video (up to 100 MB)</label><input id="v-${l.id}" type="file" accept="video/*"><button class="btn" data-a="sub" data-id="${l.id}">Submit for verification</button></div>`).join('')||'<p class="mut">No leagues yet.</p>'}</div>`},
+async ranks(){const [L,G]=await Promise.all([api('GET','/api/leagues'),api('GET','/api/gyms')]);const B=await Promise.all(L.map(l=>api('GET','/api/leaderboard?league='+l.id)));
+return `<h2>League leaderboards</h2><p class="mut">Only results approved by the sponsoring gym appear.</p><div class="grid">${L.map((l,i)=>`<div class="card"><h3>${esc(l.name)}</h3>${B[i].map((r,j)=>`<div class="row"><span>${j+1}. ${esc(r.name)}</span><b>${r.weight} kg</b></div>`).join('')||'<p class="mut">No verified results yet.</p>'}</div>`).join('')}</div>
+<h2>Gym rankings</h2><p class="mut">Measured activity only. There is no single "best gym" score.</p><div class="card wrap" style="margin-top:12px"><table><tr><th>Gym</th><th>City</th><th>Followers</th><th>Leagues</th><th>Verified entries</th></tr>${[...G].sort((a,b)=>b.followers+b.verified*3-a.followers-a.verified*3).map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.city)}</td><td>${g.followers}</td><td>${g.leagues}</td><td>${g.verified}</td></tr>`).join('')}</table></div>`},
+async gdash(){await refresh();const g=GYM;return `<h2>${esc(g.name)}</h2><p>${tag(g.status)} ${g.status==='approved'?'':'<span class="mut">Leagues and ads unlock after admin approval.</span>'}</p><div class="grid"><div class="card"><h3>Gym profile</h3><label>Name</label><input id="pn" value="${esc(g.name)}"><label>City</label><input id="pc" value="${esc(g.city)}"><label>Description</label><textarea id="pd" rows="3">${esc(g.desc)}</textarea><button class="btn" data-a="prof">Save profile</button></div>
+<div class="card"><h3>Gym Code and QR</h3><div class="stat prism">${esc(g.code)}</div><div id="qr" style="margin:10px 0;background:#fff;padding:10px;display:inline-block;border-radius:10px"></div><p class="mut">Members type this code to follow your gym.</p></div></div>
+<div class="card"><h3>Announcements</h3><input id="an" placeholder="Write an announcement"><button class="btn" data-a="ann">Publish</button>${g.news.map(n=>`<div class="row"><span>${esc(n)}</span></div>`).join('')}</div>`},
+async gleagues(){await refresh();const ok=GYM.status==='approved',[L,R]=await Promise.all([api('GET','/api/leagues'),api('GET','/api/submissions/review')]);const mine=L.filter(l=>l.gym===GYM.id);
+return `<h2>Leagues and verification</h2><div class="grid"><div class="card"><h3>Create a league</h3>${ok?'':'<p class="mut">Available after approval.</p>'}<label>League name</label><input id="ln"><label>Exercise</label><input id="le"><label>Category and age group</label><input id="lg" placeholder="Open 18-40, Men"><label>Deadline</label><input id="ld" type="date"><label>Prize pool</label><input id="lp" placeholder="₹5,000"><label>Rules and required weight</label><textarea id="lr" rows="2"></textarea><button class="btn" data-a="mkl" ${ok?'':'disabled'}>Create league</button></div>
+<div class="card"><h3>Submissions</h3>${R.map(s=>{const l=L.find(x=>x.id===s.league)||{};return `<div class="row"><span><b>${esc(s.name)}</b> · ${esc(l.name)} · ${s.weight} kg ${tag(s.st)}</span><span><button class="btn alt sm" data-a="watch" data-id="${s.id}">Watch</button> ${['pending','resubmit'].includes(s.st)?`<button class="btn sm" data-a="rev" data-id="${s.id}" data-v="approved">Approve</button> <button class="btn alt sm" data-a="rev" data-id="${s.id}" data-v="rejected">Reject</button> <button class="btn alt sm" data-a="rev" data-id="${s.id}" data-v="resubmit">Ask again</button>`:''}</span></div>`}).join('')||'<p class="mut">No submissions yet.</p>'}</div></div><p class="mut">Your leagues: ${mine.map(l=>esc(l.name)).join(', ')||'none yet'}</p>`},
+async gads(){await refresh();const ok=GYM.status==='approved',[S,A]=await Promise.all([api('GET','/api/slots'),api('GET','/api/ads')]);
+return `<h2>Advertising marketplace</h2><div class="grid"><div class="card"><h3>Available slots</h3><label>Ad text (max 140 characters)</label><input id="at" maxlength="140" placeholder="Join us this month. First week free.">${S.map(s=>`<div class="row"><span>${esc(s.label)}<br><span class="mut">${esc(s.start)} to ${esc(s.end)} · ₹${s.price}</span></span>${s.booked?tag('booked'):`<button class="btn sm" data-a="req" data-id="${s.id}" ${ok?'':'disabled'}>Request</button>`}</div>`).join('')||'<p class="mut">The admin has not added slots yet.</p>'}</div>
+<div class="card"><h3>My requests</h3>${A.map(a=>`<div class="row"><span>${esc(a.text)}<br><span class="mut">₹${a.price}${a.st==='awaiting payment'?' · pay by '+esc(a.due):''}</span></span><span>${tag(a.st)} ${a.st==='awaiting payment'?`<button class="btn sm" data-a="pay" data-id="${a.id}">Pay now</button>`:''}</span></div>`).join('')||'<p class="mut">No requests yet.</p>'}</div></div>`},
+async over(){const s=await api('GET','/api/admin/stats'),c=[['Users',s.users],['Gyms',s.gyms],['Approved gyms',s.approvedGyms],['Leagues',s.leagues],['Submissions',s.submissions],['Active ads',s.activeAds],['Revenue','₹'+s.revenue],['Open reports',s.openReports]];
+return `<h2>Platform overview</h2><div class="grid">${c.map(([k,v])=>`<div class="card"><div class="mut">${k}</div><div class="stat prism">${v}</div></div>`).join('')}</div>`},
+async agyms(){const g=await api('GET','/api/admin/gyms');return `<h2>Gym approvals</h2><div class="card">${g.map(x=>`<div class="row"><span><b>${esc(x.name)}</b> · ${esc(x.city)} · ${esc(x.code)}</span><span>${tag(x.status)} ${x.status!=='approved'?`<button class="btn sm" data-a="gs" data-id="${x.id}" data-v="approved">Approve</button>`:''} ${x.status!=='rejected'?`<button class="btn alt sm" data-a="gs" data-id="${x.id}" data-v="rejected">${x.status==='approved'?'Suspend':'Reject'}</button>`:''}</span></div>`).join('')||'<p class="mut">No gyms have registered yet.</p>'}</div>`},
+async aads(){const [S,A]=await Promise.all([api('GET','/api/slots'),api('GET','/api/ads')]);return `<h2>Slots and prices</h2><div class="grid"><div class="card"><h3>Add slot</h3><label>Label</label><input id="sl" placeholder="Home banner, 7 days"><label>Price (₹)</label><input id="sp" type="number" min="0"><label>Start</label><input id="ss" type="date"><label>End</label><input id="se" type="date"><button class="btn" data-a="mks">Add slot</button><p class="mut">${S.length} slot(s) created.</p></div>
+<div class="card"><h3>Ad requests</h3>${A.map(a=>`<div class="row"><span>${esc(a.gymName)}: ${esc(a.text)}<br><span class="mut">₹${a.price}</span></span><span>${tag(a.st)} ${a.st==='requested'?`<button class="btn sm" data-a="dec" data-id="${a.id}" data-v="1">Approve</button> <button class="btn alt sm" data-a="dec" data-id="${a.id}" data-v="">Reject</button>`:''}</span></div>`).join('')||'<p class="mut">No requests yet.</p>'}<p class="mut">Approved gyms have 3 days to pay. Paid ads run only in their purchased dates.</p></div></div>`},
+async mod(){const [R,S]=await Promise.all([api('GET','/api/admin/reports'),api('GET','/api/submissions/review')]);return `<h2>Reports and moderation</h2><div class="card">${R.map(r=>`<div class="row"><span>${esc(r.text)}</span>${r.open?`<button class="btn sm" data-a="rep" data-id="${r.id}">Mark handled</button>`:tag('handled')}</div>`).join('')||'<p class="mut">No reports.</p>'}</div><div class="card" style="margin-top:14px"><h3>All submissions</h3>${S.map(s=>`<div class="row"><span>${esc(s.name)} · ${s.weight} kg ${tag(s.st)}</span><span><button class="btn alt sm" data-a="watch" data-id="${s.id}">Watch</button> ${s.st!=='rejected'?`<button class="btn sm" data-a="rev" data-id="${s.id}" data-v="rejected">Remove</button>`:''}</span></div>`).join('')||'<p class="mut">None yet.</p>'}</div>`}};
+function gcard(g){const f=FOL.includes(g.id);return `<div class="card"><h3>${esc(g.name)}</h3><p class="mut">${esc(g.city)} · ${g.followers} followers · code ${esc(g.code)}</p><p>${esc(g.desc)}</p>${g.news.slice(0,2).map(n=>`<p class="mut">📣 ${esc(n)}</p>`).join('')}<button class="btn ${f?'alt':''}" data-a="fol" data-id="${g.id}" data-code="${esc(g.code)}">${f?'Following':'Follow'}</button></div>`}
+window.gsearch=q=>{q=q.toLowerCase();$('#gl').innerHTML=(window._g||[]).filter(g=>(g.name+g.city).toLowerCase().includes(q)).map(gcard).join('')||'<p class="mut">No gym matches. Check the spelling or use its Gym Code.</p>'};
+async function refresh(){const m=await api('GET','/api/me');ME=m.user;GYM=m.gym;FOL=m.following}
+function drawCard(dl){const c=$('#cv'),x=c.getContext('2d'),wk=getLogs().filter(l=>Date.now()-l.t<7*D);const g=x.createLinearGradient(0,0,600,320);g.addColorStop(0,'#1b1147');g.addColorStop(1,'#0d3b55');x.fillStyle=g;x.fillRect(0,0,600,320);const p=x.createLinearGradient(30,0,570,0);['#ff6ad5','#7c8cff','#4de1ff','#7dffb2'].forEach((c,i)=>p.addColorStop(i/3,c));x.fillStyle=p;x.font='800 36px Sora,sans-serif';x.fillText('PREPUN LEAGUE',30,60);x.fillStyle='#f3f5ff';x.font='600 20px Sora,sans-serif';x.fillText('Weekly progress'+(dl?' · '+fd(Date.now()):''),30,95);x.font='800 64px Sora,sans-serif';x.fillText(wk.filter(l=>l.w).length+' workouts',30,185);x.font='500 22px Sora,sans-serif';x.fillText(wk.reduce((a,l)=>a+(+l.c||0),0)+' kcal logged this week',30,232);x.fillStyle=p;x.fillRect(30,265,540,6);if(dl){const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='prepun-weekly-card.png';a.click()}}
+const A={
+async login(){const r=await api('POST','/api/login',{email:val('e'),password:val('p')});T=r.token;try{localStorage.setItem('pp_t',T)}catch(e){}await boot()},
+async register(){const r=await api('POST','/api/register',{email:val('e'),password:val('p'),name:val('n'),role,gymName:val('gn'),city:val('gc2')});T=r.token;try{localStorage.setItem('pp_t',T)}catch(e){}await boot()},
+logout(){T=null;try{localStorage.removeItem('pp_t')}catch(e){}ME=null;showAuth()},
+log(){if(!val('lw')&&!val('lf')&&!val('lk'))return toast('Add a workout, food or weight first');const l=getLogs();l.push({t:Date.now(),w:val('lw'),f:val('lf'),c:val('lc'),kg:val('lk')});setLogs(l);toast('Entry saved')},
+card(){drawCard(true)},
+async code(){const r=await api('POST','/api/follow',{code:val('gc')});toast('Following '+r.gym)},
+async fol(e){await api('POST','/api/follow',{code:e.code,unfollow:FOL.includes(e.id)})},
+async sub(e){const w=val('w-'+e.id),f=document.getElementById('v-'+e.id).files[0];if(!w||!f)return toast('Enter your weight and choose a video');if(f.size>100*1024*1024)return toast('Video is over 100 MB');toast('Uploading video...');await api('POST','/api/submissions?league='+e.id+'&weight='+w,f);toast('Sent to the gym for verification')},
+async prof(){await api('POST','/api/gym',{name:val('pn'),city:val('pc'),desc:val('pd')});toast('Profile saved')},
+async ann(){if(!val('an'))return toast('Write something first');await api('POST','/api/gym',{announce:val('an')})},
+async mkl(){await api('POST','/api/leagues',{name:val('ln'),exercise:val('le'),category:val('lg'),deadline:val('ld'),prize:val('lp'),rules:val('lr')});toast('League created')},
+async rev(e){await api('POST','/api/submissions/'+e.id+'/review',{status:e.v});toast('Marked '+e.v)},
+async watch(e){const r=await fetch('/api/videos/'+e.id,{headers:{Authorization:'Bearer '+T}});if(!r.ok)return toast('Cannot open this video');const u=URL.createObjectURL(await r.blob());window.open(u,'_blank')||toast('Allow pop-ups to watch the video')},
+async req(e){await api('POST','/api/ads',{slot:e.id,text:val('at')});toast('Request sent to admin')},
+async pay(e){await api('POST','/api/ads/'+e.id+'/pay-dev');toast('Payment confirmed. Ad is scheduled')},
+async gs(e){await api('POST','/api/admin/gyms/'+e.id,{status:e.v})},
+async mks(){await api('POST','/api/slots',{label:val('sl'),price:val('sp'),start:val('ss'),end:val('se')});toast('Slot added')},
+async dec(e){await api('POST','/api/ads/'+e.id+'/decide',{approve:!!e.v})},
+async rep(e){await api('POST','/api/admin/reports/'+e.id)}};
+const show=h=>{$('#root').innerHTML=h};
+function showAuth(){const reg=mode==='register';show(`<div id="auth"><div class="card"><h1 class="prism">PrePun League</h1><p class="mut">${reg?'Create your account':'Log in to continue'}</p>
+${reg?`<label>Your name</label><input id="n"><label>I am a</label><select id="rl" onchange="role=this.value;showAuth()"><option value="user" ${role==='user'?'selected':''}>Member</option><option value="gym" ${role==='gym'?'selected':''}>Gym owner</option></select>${role==='gym'?'<label>Gym name</label><input id="gn"><label>City</label><input id="gc2">':''}`:''}
+<label>Email</label><input id="e" type="email" autocomplete="email"><label>Password (8+ characters)</label><input id="p" type="password" autocomplete="${reg?'new':'current'}-password"><button class="btn" data-a="${reg?'register':'login'}">${reg?'Create account':'Log in'}</button> <button class="btn alt" data-m="${reg?'login':'register'}">${reg?'I have an account':'Create account'}</button></div></div>`)}
+async function draw(){if(!TABS[ME.role].some(t=>t[0]===tab))tab=TABS[ME.role][0][0];show(`<header class="glass"><b class="prism">PrePun League</b><span class="mut">${esc(ME.name)} · ${esc(ME.role)} <button class="btn alt sm" data-a="logout">Log out</button></span></header><nav class="glass">${TABS[ME.role].map(([t,n])=>`<button class="${tab===t?'on':''}" data-t="${t}">${n}</button>`).join('')}</nav><main id="app"><p class="mut">Loading...</p></main>`);
+try{$('#app').innerHTML=await V[tab]()}catch(e){$('#app').innerHTML=`<div class="card"><h3>Could not load this page</h3><p class="mut">${esc(e.message)}</p></div>`;if(!T)return showAuth()}
+if($('#qr')&&window.QRCode)new QRCode($('#qr'),{text:GYM.code,width:140,height:140});if($('#cv'))drawCard(false)}
+async function boot(){if(!T)return showAuth();try{await refresh();draw()}catch(e){T=null;showAuth()}}
+document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+if(b.dataset.m){mode=b.dataset.m;return showAuth()}
+if(b.dataset.t){tab=b.dataset.t;return draw()}
+const a=b.dataset.a;if(!a)return;if(a==='card'||a==='log'){A[a]();if(a==='log')draw();return}
+b.disabled=true;try{await A[a]({id:b.dataset.id,v:b.dataset.v,code:b.dataset.code});if(a!=='logout'&&a!=='login'&&a!=='register')await draw()}catch(er){toast(er.message);b.disabled=false}});
+boot();
+</script></body></html>

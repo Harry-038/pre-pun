@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PrePun League</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--p1:#7c5cff;--p2:#ff5cad;--p3:#3fd9ff;--p4:#8dff9e;--ink:#eef1fb;--mut:#a7b0d0;--glass:rgba(255,255,255,.06);--gline:rgba(255,255,255,.14);--bg0:#0a0b1a;--bg1:#12102a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="light"]{--ink:#161522;--mut:#5b5f7a;--glass:rgba(255,255,255,.55);--gline:rgba(20,20,50,.12);--bg0:#eef0fb;--bg1:#e3e6fb}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+body{margin:0;min-height:100%;color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif;
+background:radial-gradient(1100px 700px at 12% -8%,rgba(124,92,255,.35),transparent 60%),radial-gradient(900px 650px at 100% 0%,rgba(255,92,173,.28),transparent 55%),radial-gradient(1000px 800px at 50% 120%,rgba(63,217,255,.22),transparent 60%),linear-gradient(160deg,var(--bg0),var(--bg1));background-attachment:fixed}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;margin:0;line-height:1.1}
+h1{font-size:clamp(28px,5vw,42px);font-weight:700}h2{font-size:24px;font-weight:700}h3{font-size:17px;font-weight:700}
+.glass{background:var(--glass);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid var(--gline);border-radius:18px;box-shadow:0 8px 30px rgba(10,5,40,.18)}
+header{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 18px;margin:10px;border-radius:18px}
+.brand{font:700 22px 'Space Grotesk',sans-serif;background:linear-gradient(90deg,var(--p1),var(--p2),var(--p3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pillrow{display:flex;gap:6px;flex-wrap:wrap}
+.pill{background:transparent;border:1px solid var(--gline);color:var(--mut);padding:6px 13px;border-radius:99px;cursor:pointer;font:600 13px Inter}
+nav{display:flex;gap:6px;overflow-x:auto;padding:10px 20px}
+nav button{background:transparent;border:1px solid transparent;color:var(--mut);padding:8px 14px;border-radius:12px;font:600 14px Inter;cursor:pointer;white-space:nowrap}
+nav button.on{color:var(--ink);border-color:var(--gline);background:var(--glass)}
+main{max-width:1000px;margin:0 auto;padding:6px 16px 40px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{padding:18px}.card h3{margin-bottom:8px}.mut{color:var(--mut);font-size:13.5px}
+input,select,textarea{width:100%;padding:10px 12px;margin:5px 0 12px;border:1px solid var(--gline);border-radius:10px;background:rgba(255,255,255,.05);color:var(--ink);font:inherit}
+input::placeholder,textarea::placeholder{color:var(--mut)}
+label{font-size:13px;font-weight:600;color:var(--mut)}
+.btn{border:0;color:#fff;padding:10px 18px;border-radius:12px;font:600 14px Inter;cursor:pointer;background:linear-gradient(90deg,var(--p1),var(--p2))}
+.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--gline)}
+.btn.ok{background:linear-gradient(90deg,#2fd18f,var(--p4))}.btn.warn{background:linear-gradient(90deg,#ff5c5c,var(--p2))}
+.btn.sm{padding:6px 12px;font-size:12.5px}.btn:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--p3);outline-offset:2px}
+.tag{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:700;letter-spacing:.2px;border:1px solid var(--gline)}
+.tag.ok{background:rgba(47,209,143,.18);color:#2fd18f;border-color:transparent}.tag.no{background:rgba(255,92,92,.18);color:#ff8484;border-color:transparent}
+.tag.wait{background:rgba(255,196,92,.18);color:#ffcf6b;border-color:transparent}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--gline)}
+.row:first-of-type{border-top:0}
+.stat{font:700 34px 'Space Grotesk',sans-serif;background:linear-gradient(90deg,var(--p1),var(--p3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.ad{padding:12px 16px;margin-bottom:14px;display:flex;justify-content:space-between;gap:10px;font-weight:600;border-radius:14px;background:linear-gradient(90deg,rgba(124,92,255,.2),rgba(255,92,173,.2));border:1px solid var(--gline)}
+.wrap{overflow-x:auto}table{border-collapse:collapse;width:100%}td,th{padding:9px;text-align:left;border-bottom:1px solid var(--gline)}
+canvas{max-width:100%;border-radius:14px}
+.auth{max-width:380px;margin:8vh auto;padding:26px}
+#toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);color:#fff;padding:10px 18px;border-radius:12px;opacity:0;transition:opacity .2s;pointer-events:none;background:linear-gradient(90deg,var(--p1),var(--p2))}
+#toast.on{opacity:1}
+.err{color:#ff8484;font-size:13px;min-height:16px}
+a.linklike{color:var(--p3);cursor:pointer;text-decoration:underline}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<header class="glass"><span class="brand">PrePun League</span><div class="pillrow" id="who"></div></header>
+<nav id="nav"></nav><main id="app"></main><div id="toast" role="status"></div>
+<script>
+const LK='prepun-session';
+let API=localStorage.getItem('prepun-api')||location.origin;
+let sess=JSON.parse(localStorage.getItem(LK)||'null');
+let S={tab:'home',gyms:[],leagues:[],mySubs:[],review:[],slots:[],ads:[],reports:[],stats:null,following:[],gym:null,active:null,logs:[]};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const toast=(m,bad)=>{const t=document.getElementById('toast');t.textContent=m;t.style.background=bad?'linear-gradient(90deg,#ff5c5c,#ff5cad)':'';t.className='on';setTimeout(()=>t.className='',2600)};
+async function api(path,opts={}){
+  const h=opts.headers||{}; if(sess)h.Authorization='Bearer '+sess.token;
+  if(opts.body&&!opts.isForm&&!h['Content-Type']){h['Content-Type']='application/json';opts.body=JSON.stringify(opts.body)}
+  let r; try{r=await fetch(API+path,{...opts,headers:h})}catch(e){toast("Can't reach the server. Check the API URL.",1);throw e}
+  let j=null; try{j=await r.json()}catch(e){}
+  if(!r.ok){toast((j&&j.error)||'Request failed ('+r.status+')',1);throw new Error((j&&j.error)||'error')}
+  return j;
+}
+function setSession(s){sess=s;if(s)localStorage.setItem(LK,JSON.stringify(s));else localStorage.removeItem(LK)}
+const tabs={user:[['home','My fitness'],['gyms','Gyms'],['leagues','Leagues'],['ranks','Leaderboards']],
+gym:[['gdash','My gym'],['gleagues','My leagues'],['gads','Advertising']],
+admin:[['over','Overview'],['agyms','Gyms'],['aads','Ads & payments'],['mod','Moderation']]};
+async function loadRole(){
+  const r=sess.user.role;
+  if(r==='user'){const[g,l,ms,me]=await Promise.all([api('/api/gyms'),api('/api/leagues'),api('/api/submissions/mine'),api('/api/me')]);S.gyms=g;S.leagues=l;S.mySubs=ms;S.following=me.following}
+  if(r==='gym'){const[me,l,rv,sl,ad]=await Promise.all([api('/api/me'),api('/api/leagues'),api('/api/submissions/review'),api('/api/slots'),api('/api/ads')]);S.gym=me.gym;S.leagues=l;S.review=rv;S.slots=sl;S.ads=ad}
+  if(r==='admin'){const[st,g,sl,ad,rp,l]=await Promise.all([api('/api/admin/stats'),api('/api/admin/gyms'),api('/api/slots'),api('/api/ads'),api('/api/admin/reports'),api('/api/leagues')]);S.stats=st;S.gyms=g;S.slots=sl;S.ads=ad;S.reports=rp;S.leagues=l}
+  S.active=(await api('/api/ads/active').catch(()=>[]))[0]||null;
+  CFG=await api('/api/config').catch(()=>CFG);
+}
+const G=id=>S.gyms.find(g=>g.id===id)||{name:'Gym'},L=id=>S.leagues.find(l=>l.id===id)||{name:'League'};
+const tag=s=>`<span class="tag ${s==='approved'||s==='paid'?'ok':s==='rejected'||s==='expired'?'no':'wait'}">${esc(s)}</span>`;
+let CFG={upiEnabled:false,devPay:false};
+const val=i=>{const e=document.getElementById(i);return e?e.value.trim():''};
+
+function authView(){
+  return `<div class="glass auth"><h1 style="margin-bottom:4px">PrePun League</h1><p class="mut" style="margin-bottom:16px">Fitness tracking, gym leagues, verified rankings.</p>
+  <div id="authbox"></div><p class="err" id="aerr"></p>
+  <p class="mut" style="margin-top:4px">API server: <a class="linklike" id="apiEdit">${esc(API)}</a></p></div>`;
+}
+function authBox(mode){
+  if(mode==='login')return `<label>Email</label><input id="ae"><label>Password</label><input id="ap" type="password">
+  <button class="btn" id="doLogin" style="width:100%;margin-top:6px">Log in</button>
+  <p class="mut" style="margin-top:10px">New here? <a class="linklike" id="toReg">Create an account</a></p>`;
+  return `<label>I am a</label><select id="arole"><option value="user">Gym member</option><option value="gym">Gym owner</option></select>
+  <label>Name</label><input id="an"><div id="gymFields" style="display:none"><label>Gym name</label><input id="agn"><label>City</label><input id="ac"></div>
+  <label>Email</label><input id="ae2"><label>Password (8+ characters)</label><input id="ap2" type="password">
+  <button class="btn" id="doReg" style="width:100%;margin-top:6px">Create account</button>
+  <p class="mut" style="margin-top:10px">Already have one? <a class="linklike" id="toLogin">Log in</a></p>`;
+}
+function gcard(g){const f=S.following.includes(g.id);return `<div class="glass card"><h3>${esc(g.name)}</h3><p class="mut">${esc(g.city)} · ${g.followers} followers · ${g.leagues} leagues · ${g.verified} verified entries</p>
+<p>${esc(g.desc)||'<span class="mut">No description yet.</span>'}</p>${(g.news||[]).slice(0,2).map(n=>`<p class="mut">📣 ${esc(n)}</p>`).join('')}
+<button class="btn ${f?'alt':''} sm" data-a="fol" data-id="${g.id}" data-code="${esc(g.code)}">${f?'Following':'Follow'}</button></div>`}
+
+const V={
+home(){const ad=S.active;
+return `${ad?`<div class="ad"><span>Sponsored: ${esc(ad.text)}</span><span>${esc(ad.gym)}</span></div>`:''}
+<h1>Track. Compete. Rank.</h1><p class="mut">Your log stays private to you.</p>
+<div class="grid" style="margin-top:14px"><div class="glass card"><h3>Log today</h3>
+<label>Workout</label><input id="lw" placeholder="e.g. Squat 5x5 at 100 kg">
+<label>Food and calories</label><input id="lf" placeholder="e.g. Dal, roti, curd">
+<label>Calories (number)</label><input id="lc" type="number" min="0">
+<label>Body weight (kg)</label><input id="lk" type="number" min="0" step=".1">
+<button class="btn" data-a="log">Save entry</button></div>
+<div class="glass card"><h3>Weekly progress card</h3><canvas id="cv" width="560" height="300"></canvas><br><br>
+<button class="btn alt" data-a="card">Download as image</button></div></div>
+<div class="glass card" style="margin-top:14px"><h3>History (this device)</h3>${S.logs.slice().reverse().slice(0,8).map(x=>`<div class="row"><span>${esc(x.w||x.f||'Weight check')}</span><span class="mut">${new Date(x.t).toISOString().slice(0,10)}${x.kg?` · ${x.kg} kg`:''}</span></div>`).join('')||'<p class="mut">Your entries appear here after you log them.</p>'}</div>
+<p class="mut" style="margin-top:10px">Note: today's log is kept on this device for the progress card; it isn't synced to your account yet.</p>`},
+gyms(){return `<h2>Find a gym</h2><div class="grid" style="margin:12px 0"><div class="glass card"><h3>Enter Gym Code</h3><input id="gc" placeholder="e.g. IRON24"><button class="btn" data-a="code">Follow gym</button></div>
+<div class="glass card"><h3>Search</h3><input id="gs" placeholder="City or gym name" oninput="gsearch(this.value)"></div></div>
+<div class="grid" id="gl">${S.gyms.map(gcard).join('')||'<p class="mut">No approved gyms yet.</p>'}</div>`},
+leagues(){return `<h2>Leagues</h2><div class="grid" style="margin-top:12px">${S.leagues.map(l=>{const mine=S.mySubs.filter(s=>s.league===l.id);
+return `<div class="glass card"><h3>${esc(l.name)}</h3><p class="mut">${esc(l.gymName||'')} · ${esc(l.category)} · closes ${l.deadline} · prize ${esc(l.prize)}</p><p><b>${esc(l.exercise)}.</b> ${esc(l.rules)}</p>
+${mine.map(s=>`<div class="row"><span>${s.weight} kg</span>${tag(s.st)}</div>`).join('')}
+<label>Declared weight (kg)</label><input id="w-${l.id}" type="number" min="1" step=".5"><label>Performance video</label><input id="v-${l.id}" type="file" accept="video/*">
+<button class="btn" data-a="sub" data-id="${l.id}">Submit for verification</button></div>`}).join('')||'<p class="mut">No leagues yet.</p>'}</div>`},
+ranks(){return `<h2>League leaderboards</h2><div class="grid" style="margin:12px 0" id="lb">Loading…</div>
+<h2 style="margin-top:20px">Gym rankings</h2><p class="mut">Based on followers, leagues and verified entries only.</p>
+<div class="glass card wrap" style="margin-top:12px"><table><tr><th>Gym</th><th>City</th><th>Followers</th><th>Leagues</th><th>Verified</th></tr>${[...S.gyms].sort((a,b)=>(b.followers+b.verified*3)-(a.followers+a.verified*3)).map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.city)}</td><td>${g.followers}</td><td>${g.leagues}</td><td>${g.verified}</td></tr>`).join('')}</table></div>`},
+gdash(){const g=S.gym;return `<h2>${esc(g.name)}</h2><p>${tag(g.status)}${g.status!=='approved'?' Waiting for admin approval before leagues and ads unlock.':''}</p>
+<div class="grid" style="margin-top:12px"><div class="glass card"><h3>Gym profile</h3><label>Name</label><input id="pn" value="${esc(g.name)}"><label>City</label><input id="pc" value="${esc(g.city)}"><label>Description</label><textarea id="pd" rows="3">${esc(g.desc)}</textarea><button class="btn" data-a="prof">Save profile</button></div>
+<div class="glass card"><h3>Gym Code and QR</h3><div class="stat">${esc(g.code)}</div><div id="qr" style="margin:10px 0;background:#fff;padding:10px;border-radius:10px;display:inline-block"></div></div></div>
+<div class="glass card" style="margin-top:14px"><h3>Announcements</h3><input id="an" placeholder="Write an announcement"><button class="btn" data-a="ann">Publish</button>${(g.news||[]).map(n=>`<div class="row"><span>${esc(n)}</span></div>`).join('')}</div>`},
+gleagues(){const g=S.gym,ok=g.status==='approved',mine=S.leagues.filter(l=>l.gym===g.id);
+return `<h2>League verification</h2>${ok?'':'<p>'+tag(g.status)+' Leagues unlock after approval.</p>'}
+<div class="grid" style="margin:12px 0"><div class="glass card"><h3>Create a league</h3><label>Name</label><input id="ln"><label>Exercise</label><input id="le"><label>Category</label><input id="lg"><label>Deadline</label><input id="ld" type="date"><label>Prize</label><input id="lp"><label>Rules</label><textarea id="lr" rows="2"></textarea><button class="btn" data-a="mkl" ${ok?'':'disabled'}>Create league</button></div>
+<div class="glass card"><h3>Submissions to review</h3>${S.review.filter(s=>s.st==='pending').map(s=>`<div class="row"><span><b>${esc(s.name)}</b> · ${esc(L(s.league).name)} · ${s.weight} kg</span><span><button class="btn ok sm" data-a="vr" data-id="${s.id}" data-v="approved">Approve</button> <button class="btn warn sm" data-a="vr" data-id="${s.id}" data-v="rejected">Reject</button> <button class="btn alt sm" data-a="vr" data-id="${s.id}" data-v="resubmit">Ask again</button></span></div>`).join('')||'<p class="mut">Nothing waiting.</p>'}</div></div>
+<p class="mut">Your leagues: ${mine.map(l=>esc(l.name)).join(', ')||'none yet'}</p>`},
+gads(){const g=S.gym,ok=g.status==='approved',mine=S.ads.filter(a=>a.gym===g.id);
+return `<h2>Advertising marketplace</h2><div class="grid" style="margin:12px 0"><div class="glass card"><h3>Available slots</h3>${S.slots.map(s=>`<div class="row"><span>${esc(s.label)}<br><span class="mut">${s.start} to ${s.end} · ₹${s.price}</span></span>${s.booked?tag('booked'):`<button class="btn sm" data-a="req" data-id="${s.id}" ${ok?'':'disabled'}>Request</button>`}</div>`).join('')}<label style="margin-top:8px">Ad text</label><input id="at" placeholder="Join us this month."></div>
+<div class="glass card"><h3>My requests</h3>${mine.map(a=>`<div class="row" style="flex-direction:column;align-items:stretch"><div class="row" style="border-top:0;padding-top:0"><span>${esc(S.slots.find(s=>s.id===a.slot)?.label)}<br><span class="mut">${esc(a.text)}${a.st==='awaiting payment'?' · pay by '+a.due:''}</span></span><span>${tag(a.st)}</span></div>
+${a.st==='awaiting payment'&&a.upi?`<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:6px"><div class="qrbox" id="qr-${a.id}" style="background:#fff;padding:8px;border-radius:10px"></div><div><a class="linklike" href="${esc(a.upi)}">Open in a UPI app</a><br><button class="btn ok sm" data-a="claim" data-id="${a.id}" style="margin-top:8px">I've paid</button></div></div>`:''}
+${a.st==='awaiting payment'&&!a.upi&&CFG.devPay?`<button class="btn ok sm" data-a="pay" data-id="${a.id}" style="margin-top:6px">Pay now (test mode)</button>`:''}
+${a.st==='payment claimed'?'<p class="mut" style="margin-top:6px">Waiting for the admin to confirm your payment.</p>':''}
+</div>`).join('')||'<p class="mut">No requests yet.</p>'}</div></div>`},
+over(){const s=S.stats,c=[['Gyms',s.gyms],['Approved',s.approvedGyms],['Leagues',s.leagues],['Submissions',s.submissions],['Active ads',s.activeAds],['Revenue','₹'+s.revenue],['Open reports',s.openReports]];
+return `<h2>Platform overview</h2><div class="grid" style="margin-top:12px">${c.map(([k,v])=>`<div class="glass card"><div class="mut">${k}</div><div class="stat">${v}</div></div>`).join('')}</div>`},
+agyms(){return `<h2>Gym approvals</h2><div class="glass card" style="margin-top:12px">${S.gyms.map(g=>`<div class="row"><span><b>${esc(g.name)}</b> · ${esc(g.city)} · ${esc(g.code)}</span><span>${tag(g.status)} ${g.status!=='approved'?`<button class="btn ok sm" data-a="gs" data-id="${g.id}" data-v="approved">Approve</button>`:''} ${g.status!=='rejected'?`<button class="btn warn sm" data-a="gs" data-id="${g.id}" data-v="rejected">${g.status==='approved'?'Suspend':'Reject'}</button>`:''}</span></div>`).join('')}</div>`},
+aads(){return `<h2>Slots and prices</h2><p class="mut">${CFG.upiEnabled?'Gyms pay by UPI. Confirm each payment yourself after checking your bank app.':'No UPI ID is configured yet — set UPI_ID on the server to collect payments.'}</p>
+<div class="grid" style="margin:12px 0"><div class="glass card"><h3>Add slot</h3><label>Label</label><input id="sl"><label>Price (₹)</label><input id="sp" type="number" min="0"><label>Start</label><input id="ss" type="date"><label>End</label><input id="se" type="date"><button class="btn" data-a="mks">Add slot</button></div>
+<div class="glass card"><h3>Ad requests</h3>${S.ads.map(a=>`<div class="row"><span>${esc(a.gymName)} · ${esc(S.slots.find(s=>s.id===a.slot)?.label)} · ₹${a.price}<br><span class="mut">${esc(a.text)}</span></span><span>${tag(a.st)} ${a.st==='requested'?`<button class="btn ok sm" data-a="ar" data-id="${a.id}" data-v="1">Approve</button> <button class="btn warn sm" data-a="ar" data-id="${a.id}" data-v="0">Reject</button>`:''}${['payment claimed','awaiting payment'].includes(a.st)?`<button class="btn ok sm" data-a="confirm" data-id="${a.id}">Confirm payment received</button>`:''}</span></div>`).join('')||'<p class="mut">No requests yet.</p>'}</div></div>`},
+mod(){return `<h2>Reports</h2><div class="glass card" style="margin-top:12px">${S.reports.map(r=>`<div class="row"><span>${esc(r.text)}</span>${r.open?`<button class="btn sm" data-a="rep" data-id="${r.id}">Mark handled</button>`:tag('handled')}</div>`).join('')||'<p class="mut">No reports.</p>'}</div>`}};
+window.gsearch=async q=>{const g=await api('/api/gyms?q='+encodeURIComponent(q));document.getElementById('gl').innerHTML=g.map(gcard).join('')||'<p class="mut">No match. Try the Gym Code instead.</p>'};
+
+async function draw(){
+  if(!sess){document.getElementById('who').innerHTML='';document.getElementById('nav').innerHTML='';document.getElementById('app').innerHTML=authView();
+    document.getElementById('authbox').innerHTML=authBox('login');wireAuth('login');return}
+  document.getElementById('who').innerHTML=`<span class="mut" style="align-self:center;margin-right:4px">${esc(sess.user.name)}</span><button class="pill" id="logout">Log out</button>`;
+  document.getElementById('nav').innerHTML=tabs[sess.user.role].map(([t,n])=>`<button class="${S.tab===t?'on':''}" data-tab="${t}">${n}</button>`).join('');
+  document.getElementById('app').innerHTML=V[S.tab]();
+  document.getElementById('logout').onclick=()=>{setSession(null);draw()};
+  if(S.tab==='ranks'){const rows=await Promise.all(S.leagues.map(async l=>({l,lb:await api('/api/leaderboard?league='+l.id)})));
+    document.getElementById('lb').innerHTML=rows.map(({l,lb})=>`<div class="glass card"><h3>${esc(l.name)}</h3>${lb.map((r,i)=>`<div class="row"><span>${i+1}. ${esc(r.name)}</span><b>${r.weight} kg</b></div>`).join('')||'<p class="mut">No verified results yet.</p>'}</div>`).join('')}
+  if(document.getElementById('qr')){document.getElementById('qr').innerHTML='';new QRCode(document.getElementById('qr'),{text:'prepun://gym/'+S.gym.code,width:130,height:130})}
+  if(S.tab==='gads')S.ads.filter(a=>a.gym===S.gym.id&&a.st==='awaiting payment'&&a.upi).forEach(a=>{const el=document.getElementById('qr-'+a.id);if(el)new QRCode(el,{text:a.upi,width:120,height:120})});
+  if(document.getElementById('cv'))drawCard();
+}
+function drawCard(){const c=document.getElementById('cv'),x=c.getContext('2d'),wk=S.logs.filter(l=>Date.now()-l.t<7*864e5);
+const grd=x.createLinearGradient(0,0,560,300);grd.addColorStop(0,'#160f2e');grd.addColorStop(1,'#2a1240');x.fillStyle=grd;x.fillRect(0,0,560,300);
+x.fillStyle='#ff5cad';x.font='700 30px "Space Grotesk",sans-serif';x.fillText('PREPUN LEAGUE',26,54);
+x.fillStyle='#eef1fb';x.font='500 18px Inter,sans-serif';x.fillText('Weekly progress',26,84);
+x.font='700 60px "Space Grotesk",sans-serif';x.fillStyle='#7c5cff';x.fillText(wk.filter(l=>l.w).length+' workouts',26,170);
+x.font='500 18px Inter,sans-serif';x.fillStyle='#3fd9ff';x.fillText(wk.reduce((a,l)=>a+(+l.c||0),0)+' kcal logged this week',26,206);}
+function wireAuth(mode){
+  document.getElementById('apiEdit').onclick=()=>{const v=prompt('Backend API URL',API);if(v){API=v.trim().replace(/\/$/,'');localStorage.setItem('prepun-api',API);draw()}};
+  if(mode==='login'){document.getElementById('toReg').onclick=()=>{document.getElementById('authbox').innerHTML=authBox('register');wireAuth('register')};
+    document.getElementById('doLogin').onclick=async()=>{try{const r=await api('/api/login',{method:'POST',body:{email:val('ae'),password:val('ap')}});setSession(r);await loadRole();draw()}catch(e){document.getElementById('aerr').textContent=e.message}}}
+  else{document.getElementById('arole').onchange=e=>document.getElementById('gymFields').style.display=e.target.value==='gym'?'':'none';
+    document.getElementById('toLogin').onclick=()=>{document.getElementById('authbox').innerHTML=authBox('login');wireAuth('login')};
+    document.getElementById('doReg').onclick=async()=>{try{const role=document.getElementById('arole').value;const b={email:val('ae2'),password:val('ap2'),name:val('an'),role};if(role==='gym'){b.gymName=val('agn');b.city=val('ac')}const r=await api('/api/register',{method:'POST',body:b});setSession(r);await loadRole();draw()}catch(e){document.getElementById('aerr').textContent=e.message}}}
+}
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('button[data-tab]');if(b){S.tab=b.dataset.tab;return draw()}
+  const a=e.target.closest('button[data-a]');if(!a)return;const A=a.dataset;
+  try{
+  if(A.a==='log'){S.logs.push({t:Date.now(),w:val('lw'),f:val('lf'),c:val('lc'),kg:val('lk')});toast('Entry saved');return draw()}
+  if(A.a==='card'){drawCard();const l=document.createElement('a');l.href=document.getElementById('cv').toDataURL('image/png');l.download='prepun-weekly-card.png';l.click();return}
+  if(A.a==='code'){await api('/api/follow',{method:'POST',body:{code:val('gc')}});toast('Following gym');await loadRole();return draw()}
+  if(A.a==='fol'){await api('/api/follow',{method:'POST',body:{code:A.code,unfollow:S.following.includes(A.id)}});await loadRole();return draw()}
+  if(A.a==='sub'){const w=+val('w-'+A.id),f=document.getElementById('v-'+A.id).files[0];if(!w||!f)return toast('Enter your weight and choose a video',1);
+    await api(`/api/submissions?league=${A.id}&weight=${w}`,{method:'POST',isForm:1,headers:{'Content-Type':f.type||'video/mp4'},body:f});toast('Sent for verification');await loadRole();return draw()}
+  if(A.a==='prof'){await api('/api/gym',{method:'POST',body:{name:val('pn'),city:val('pc'),desc:val('pd')}});toast('Saved');await loadRole();return draw()}
+  if(A.a==='ann'){if(!val('an'))return;await api('/api/gym',{method:'POST',body:{announce:val('an')}});await loadRole();return draw()}
+  if(A.a==='mkl'){await api('/api/leagues',{method:'POST',body:{name:val('ln'),exercise:val('le'),category:val('lg'),deadline:val('ld'),prize:val('lp'),rules:val('lr')}});toast('League created');await loadRole();return draw()}
+  if(A.a==='vr'){await api('/api/submissions/'+A.id+'/review',{method:'POST',body:{status:A.v}});toast('Marked '+A.v);await loadRole();return draw()}
+  if(A.a==='req'){if(!val('at'))return toast('Write ad text first',1);await api('/api/ads',{method:'POST',body:{slot:A.id,text:val('at')}});toast('Sent to admin');await loadRole();return draw()}
+  if(A.a==='pay'){await api('/api/ads/'+A.id+'/pay-dev',{method:'POST'});toast('Paid (test mode)');await loadRole();return draw()}
+  if(A.a==='claim'){await api('/api/ads/'+A.id+'/claim-payment',{method:'POST'});toast('Thanks — the admin will confirm shortly');await loadRole();return draw()}
+  if(A.a==='confirm'){await api('/api/ads/'+A.id+'/confirm-payment',{method:'POST'});toast('Payment confirmed. Ad is scheduled.');await loadRole();return draw()}
+  if(A.a==='gs'){await api('/api/admin/gyms/'+A.id,{method:'POST',body:{status:A.v}});await loadRole();return draw()}
+  if(A.a==='ar'){await api('/api/ads/'+A.id+'/decide',{method:'POST',body:{approve:A.v==='1'}});await loadRole();return draw()}
+  if(A.a==='rep'){await api('/api/admin/reports/'+A.id,{method:'POST'});await loadRole();return draw()}
+  }catch(e){}
+});
+(async()=>{if(sess){try{await loadRole()}catch(e){setSession(null)}}draw()})();
+</script></body></html>
